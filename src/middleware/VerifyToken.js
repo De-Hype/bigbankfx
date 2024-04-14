@@ -13,8 +13,6 @@ function VerifyToken(req, res, next) {
       return next(new AppError("Incorrect or expired token, please log in", 401));
     };
     req.user = decoded;
-    //console.log(req.user)
-    
     next()
   }); 
 }
