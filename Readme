@@ -1,1 +1,3 @@
-<h1 align="center" >BigbankFX</h1>
+#BigbankFX
+
+#BigbankFX was built by David Hype using Node.js/express.js and MongoDb for the database.
