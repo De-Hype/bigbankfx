@@ -1,5 +1,4 @@
 function AppResponse(res, message, statusCode = 200, data = null) {
-    
   let status;
   switch (statusCode) {
     case (statusCode = 200):
@@ -22,8 +21,6 @@ function AppResponse(res, message, statusCode = 200, data = null) {
       break;
     case (statusCode = 206):
       status = "Partial Content";
-      break;
-    default:
       break;
   }
 

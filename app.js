@@ -7,11 +7,12 @@ const mongoSanitize = require("express-mongo-sanitize");
 require("dotenv").config();
 const Connect = require("./src/config/db.config");
 const authRoutes = require("./src/routes/auth.routes");
+const adminRoutes = require("./src/routes/admin.routes");
 
 const GlobalErrorHandler = require("./src/errors/errorHandler");
 const AppError = require("./src/errors/AppError");
 
-const app = express();
+const app = express(); 
 process.on("uncaughtException", (err) => {
   console.log(err.name, err.message);
   console.log("Unhandled Exception, shutting down...");
@@ -33,6 +34,7 @@ app.use(morgan("dev"));
 
 //Routes will go in here
 app.use("/v1/api/auth", authRoutes);
+app.use("/v1/api/admin", adminRoutes);
 
 //Error Handlers
 app.all("*", (req, res, next) => {

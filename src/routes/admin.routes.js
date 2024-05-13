@@ -10,8 +10,8 @@ const VerifyToken = require("../middleware/VerifyToken");
 router.get(
   "/fetch-all-users",
   Limiter,
-  VerifyToken,
-  CheckRole("admin"),
+  // VerifyToken,
+  // CheckRole("admin"),
   FetchAllUsers
 );
 router.get(

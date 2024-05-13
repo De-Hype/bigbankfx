@@ -3,8 +3,7 @@ const AppError = require("../errors/AppError");
 
 function VerifyToken(req, res, next) {
     
-  const token = req.headers.authorization.split(" ")[1];
- 
+  const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     return next(new AppError("Invalid token, Unauthorized", 401));
   }
