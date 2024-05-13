@@ -23,8 +23,6 @@ const MakePaymentSchema = Joi.object({
 })
 
 
-
-
 exports.ValidateSignUp= validator(SignUpSchema);
 exports.ValidateSignIn = validator(SignInSchema);
 exports.ValidateInitializePayment=validator(MakePaymentSchema);

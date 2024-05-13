@@ -11,7 +11,6 @@ const authRoutes = require("./src/routes/auth.routes");
 const GlobalErrorHandler = require("./src/errors/errorHandler");
 const AppError = require("./src/errors/AppError");
 
-
 const app = express();
 process.on("uncaughtException", (err) => {
   console.log(err.name, err.message);
@@ -20,7 +19,13 @@ process.on("uncaughtException", (err) => {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+  })
+);
 app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
@@ -29,18 +34,16 @@ app.use(morgan("dev"));
 //Routes will go in here
 app.use("/v1/api/auth", authRoutes);
 
-
 //Error Handlers
 app.all("*", (req, res, next) => {
-    next(
-      new AppError(
-        `Can not find ${req.originalUrl} with ${req.method} on this server`,
-        501
-      )
-    );
-  });
+  next(
+    new AppError(
+      `Can not find ${req.originalUrl} with ${req.method} on this server`,
+      501
+    )
+  );
+});
 app.use(GlobalErrorHandler);
-  
 
 const Port = process.env.PORT || 8080;
 const server = Connect().then(() => {
