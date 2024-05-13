@@ -1,7 +1,10 @@
 const bcrypt = require("bcryptjs");
 const AppError = require("../errors/AppError");
 const catchAsync = require("../errors/catchAsync");
-const { ValidateSignUp, ValidateSignIn } = require("../helpers/formValidation");
+const {
+  ValidateSignUp,
+  ValidateSignIn,
+} = require("../validations/authValidation");
 const GeneratePublicId = require("../helpers/GeneratePublicId");
 const AppResponse = require("../helpers/AppResponse");
 const User = require("../models/user.model");

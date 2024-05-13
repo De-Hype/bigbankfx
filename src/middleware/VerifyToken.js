@@ -7,7 +7,7 @@ function VerifyToken(req, res, next) {
   if (!token) {
     return next(new AppError("Invalid token, Unauthorized", 401));
   }
-  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+  jwt.verify(token, process.env.LOGIN_JWT_TOKEN, (err, decoded) => {
     if (err) {
       return next(new AppError("Incorrect or expired token, please log in", 401));
     };

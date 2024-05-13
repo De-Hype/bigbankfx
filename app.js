@@ -8,6 +8,7 @@ require("dotenv").config();
 const Connect = require("./src/config/db.config");
 const authRoutes = require("./src/routes/auth.routes");
 const adminRoutes = require("./src/routes/admin.routes");
+const userRoutes = require("./src/routes/user.routes");
 
 const GlobalErrorHandler = require("./src/errors/errorHandler");
 const AppError = require("./src/errors/AppError");
@@ -34,6 +35,7 @@ app.use(morgan("dev"));
 
 //Routes will go in here
 app.use("/v1/api/auth", authRoutes);
+app.use("/v1/api/user", userRoutes);
 app.use("/v1/api/admin", adminRoutes);
 
 //Error Handlers

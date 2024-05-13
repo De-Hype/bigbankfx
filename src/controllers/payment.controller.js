@@ -1,19 +1,18 @@
 const AppError = require("../errors/AppError");
 const catchAsync = require("../errors/catchAsync");
-const { ValidateInitializePayment } = require("../helpers/formValidation");
+const { ValidateInitializePayment } = require("../validations/authValidation");
 const User = require("../models/user.model");
 const https = require("https");
 require("dotenv").config();
 
-
 module.exports.InitializePayment = catchAsync(async (req, res, next) => {
-    const {value, error} = ValidateInitializePayment(req.body);
-    if (error){
-        return next(new AppError(error.message, 400))
-    }
-    const user = req.user;
-  
-//Write the code that should run before we make the payment
+  const { value, error } = ValidateInitializePayment(req.body);
+  if (error) {
+    return next(new AppError(error.message, 400));
+  }
+  const user = req.user;
+
+  //Write the code that should run before we make the payment
   const params = JSON.stringify({
     first_name: `${user.first_name}`,
     last_name: `${user.last_name}`,
@@ -89,7 +88,7 @@ module.exports.VerifyPayment = catchAsync(async (req, res, next) => {
             new AppError("User with provided details does not exist", 402)
           );
         }
-        
+
         if (user.id != subscriber_id) {
           return next(new AppError("Invalid user details", 402));
         }
@@ -102,12 +101,14 @@ module.exports.VerifyPayment = catchAsync(async (req, res, next) => {
         }
 
         user.courses.push(...product_ids);
-        
+
         await user.populate("courses");
 
-        const isSubscriber = courseFetched.some(course => course.subscribers.includes(subscriber_id));
-        
-        if (isSubscriber){
+        const isSubscriber = courseFetched.some((course) =>
+          course.subscribers.includes(subscriber_id)
+        );
+
+        if (isSubscriber) {
           return next(
             new AppError("This user has already bought this course", 402)
           );
@@ -122,7 +123,7 @@ module.exports.VerifyPayment = catchAsync(async (req, res, next) => {
         //Now lets store the id of the user in our Subscribers model
         courseFetched.forEach(async (courses) => {
           courses.subscribers.push(subscriber_id);
-           await courses.save();
+          await courses.save();
         });
         await user.save();
         return res.status(200).json({ user, courseFetched, result });
