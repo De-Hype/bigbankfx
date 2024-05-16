@@ -29,7 +29,11 @@ const userSchema = new mongoose.Schema({
     plan:{
         type:String,
         enum:["basic", "silver", "gold"],
-        required:true
+        required:true,
+        validate:function(value){
+            return ["basic", "silver", "gold"].includes(value);
+        },
+        message:"Invalid plan. Must be either one of basic, silver or gold."
     },
     total_balance:{
         type:Number,

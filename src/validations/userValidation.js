@@ -5,7 +5,7 @@ const validator = (schema) => (payload) =>
 
 const UpdateUserPlan = Joi.object({
   email: Joi.string().email().required().label("Email"),
-  plan: Joi.string().min(4).max(6).required().allow("basic", "silver", "gold"),
+  plan: Joi.string().min(4).max(6).required().valid("basic", "silver", "gold"),
   password: Joi.string().min(6).max(30).required().label("Password"),
 });
 

@@ -79,9 +79,6 @@ module.exports.SignIn = catchAsync(async (req, res, next) => {
     process.env.LOGIN_JWT_TOKEN,
     value.rememberMe
   );
-  // console.log(`${refresh_token} is the refresh token.`);
-  // console.log(`${access_token} is the access token.`);
-  // account = { ...account, token: token };
   res.cookie("big_bank_fx_access_token", access_token, {
     ...res.CookieOptions,
     expires: new Date(Date.now() + 15 * 60 * 1000),
@@ -101,14 +98,28 @@ module.exports.GetNewAccessToken = catchAsync(async (req, res, next) => {
   if (!refreshToken) {
     return next(new AppError("Invalid token, Unauthorized", 401));
   }
-  jwt.verify(refreshToken, process.env.LOGIN_JWT_TOKEN, (err, decoded) => {
+  jwt.verify(refreshToken, process.env.LOGIN_JWT_TOKEN, async (err, decoded) => {
     if (err) {
       return next(
         new AppError("Incorrect or expired token, please log in", 401)
       );
     }
     req.user = decoded;
-    const account = req.user.payload
+
+    const findUser = await User.findOne({ publicId: req.user.payload.publicId });
+    if (!findUser) {
+      return next(
+        new AppError("User does not exist, can not create access token", 401)
+      );
+    }
+    const account = {
+      publicId: findUser.publicId,
+      first_name: findUser.first_name,
+      last_name: findUser.last_name,
+      username: findUser.username,
+      email: findUser.email,
+      plan: findUser.plan,
+    };
     const access_token = GenerateAccessToken(
       account,
       process.env.JWT_ACCESS_TOKEN_CREATE
