@@ -12,7 +12,7 @@ router.get(
   "/fetch-all-users",
   Limiter,
   VerifyAccessToken,
-  // CheckRole("admin"),
+  CheckRole("admin"),
   FetchAllUsers
 );
 // router.get(

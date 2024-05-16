@@ -4,8 +4,10 @@
 const bcrypt = require("bcryptjs");
 const AppError = require("../errors/AppError");
 const catchAsync = require("../errors/catchAsync");
-const { ValidateUpdatePlan, ValidateDeleteUser } = require("../validations/userValidation");
-const GeneratePublicId = require("../helpers/GeneratePublicId");
+const {
+  ValidateUpdatePlan,
+  ValidateDeleteUser,
+} = require("../validations/userValidation");
 const AppResponse = require("../helpers/AppResponse");
 const User = require("../models/user.model");
 const {
@@ -85,11 +87,10 @@ module.exports.UpdatePlan = catchAsync(async (req, res, next) => {
 module.exports.DeleteUser = catchAsync(async (req, res, next) => {
   const { value, error } = ValidateDeleteUser(req.body);
   if (error) return next(new AppError(error.message, 400));
-  // const { publicId, plan } = req.user.payload;
-  const deletedUser = await User.findOneAndDelete({ email:value.email });
-  
+
+  const deletedUser = await User.findOneAndDelete({ email: value.email });
   if (!deletedUser)
     return next(new AppError("User account deletion failed", 404));
-  
+
   return AppResponse(res, "Account deleted succesfully", 200);
 });

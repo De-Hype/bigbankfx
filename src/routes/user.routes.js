@@ -10,7 +10,7 @@ router.delete(
   "/delete-user",
   Limiter,
   VerifyAccessToken,
-//   CheckRole("admin"),
+  CheckRole("admin"),
   DeleteUser
 );
 
