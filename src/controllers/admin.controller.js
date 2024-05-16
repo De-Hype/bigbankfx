@@ -77,6 +77,6 @@ module.exports.FetchAllUsers = catchAsync(async (req, res, next) => {
 AppResponse(res, "User fetched successfully", 200, users)
 })
 
-module.exports.FetchAllTransactionsHistory = catchAsync(async (req, res, next) => {
+// module.exports.FetchAllTransactionsHistory = catchAsync(async (req, res, next) => {
   
-})
+// })

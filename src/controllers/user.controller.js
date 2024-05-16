@@ -4,7 +4,7 @@
 const bcrypt = require("bcryptjs");
 const AppError = require("../errors/AppError");
 const catchAsync = require("../errors/catchAsync");
-const { ValidateUpdatePlan } = require("../validations/userValidation");
+const { ValidateUpdatePlan, ValidateDeleteUser } = require("../validations/userValidation");
 const GeneratePublicId = require("../helpers/GeneratePublicId");
 const AppResponse = require("../helpers/AppResponse");
 const User = require("../models/user.model");
@@ -47,9 +47,9 @@ module.exports.UpdatePlan = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findOneAndUpdate(
     { publicId: publicId },
     { plan: value.plan },
-    {new:true}
+    { new: true }
   ).select("-password");
-  
+
   let account = {
     publicId: updatedUser.publicId,
     first_name: updatedUser.first_name,
@@ -80,4 +80,16 @@ module.exports.UpdatePlan = catchAsync(async (req, res, next) => {
   });
 
   return AppResponse(res, "Plan updated successfully", 200, account);
+});
+
+module.exports.DeleteUser = catchAsync(async (req, res, next) => {
+  const { value, error } = ValidateDeleteUser(req.body);
+  if (error) return next(new AppError(error.message, 400));
+  // const { publicId, plan } = req.user.payload;
+  const deletedUser = await User.findOneAndDelete({ email:value.email });
+  
+  if (!deletedUser)
+    return next(new AppError("User account deletion failed", 404));
+  
+  return AppResponse(res, "Account deleted succesfully", 200);
 });

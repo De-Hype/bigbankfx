@@ -26,9 +26,9 @@ const adminSchema = new mongoose.Schema({
     password:{
         type:String,  
     },
-    plan:{
+    role:{
         type:String,
-        enum:["basic", "silver", "gold"],
+        default:"admin",
         required:true
     },
     
