@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const AppError = require("../errors/AppError");
 const catchAsync = require("../errors/catchAsync");
 const {
@@ -8,7 +9,10 @@ const {
 const GeneratePublicId = require("../helpers/GeneratePublicId");
 const AppResponse = require("../helpers/AppResponse");
 const User = require("../models/user.model");
-const GenerateToken = require("../helpers/GenerateToken");
+const {
+  GenerateAccessToken,
+  GenerateRefreshToken,
+} = require("../helpers/GenerateToken");
 require("dotenv").config();
 
 module.exports.SignUp = catchAsync(async (req, res, next) => {
@@ -66,11 +70,56 @@ module.exports.SignIn = catchAsync(async (req, res, next) => {
     email: findUser.email,
     plan: findUser.plan,
   };
-  const token = GenerateToken(
+  const access_token = GenerateAccessToken(
+    account,
+    process.env.JWT_ACCESS_TOKEN_CREATE
+  );
+  const refresh_token = GenerateRefreshToken(
     account,
     process.env.LOGIN_JWT_TOKEN,
     value.rememberMe
   );
-  account = { ...account, token: token };
+  // console.log(`${refresh_token} is the refresh token.`);
+  // console.log(`${access_token} is the access token.`);
+  // account = { ...account, token: token };
+  res.cookie("big_bank_fx_access_token", access_token, {
+    ...res.CookieOptions,
+    expires: new Date(Date.now() + 15 * 60 * 1000),
+    maxAge: new Date(Date.now() + 15 * 60 * 1000),
+  });
+  res.cookie("big_bank_fx_refresh_token", refresh_token, {
+    ...res.CookieOptions,
+    expires: new Date(Date.now() + 86400000),
+    maxAge: new Date(Date.now() + 86400000),
+  });
   return AppResponse(res, "User logged in successfully", 200, account);
+});
+
+module.exports.GetNewAccessToken = catchAsync(async (req, res, next) => {
+  const refreshToken = req.cookies.big_bank_fx_refresh_token;
+  // console.log(refreshToken);
+  if (!refreshToken) {
+    return next(new AppError("Invalid token, Unauthorized", 401));
+  }
+  jwt.verify(refreshToken, process.env.LOGIN_JWT_TOKEN, (err, decoded) => {
+    if (err) {
+      return next(
+        new AppError("Incorrect or expired token, please log in", 401)
+      );
+    }
+    req.user = decoded;
+    const account = req.user.payload
+    const access_token = GenerateAccessToken(
+      account,
+      process.env.JWT_ACCESS_TOKEN_CREATE
+    );
+    // console.log(access_token)
+    res.cookie("big_bank_fx_access_token", access_token, {
+      ...res.CookieOptions,
+      expires: new Date(Date.now() + 15 * 60 * 1000),
+      maxAge: new Date(Date.now() + 15 * 60 * 1000),
+    });
+    return AppResponse(res, "Access token refreshed succesfully", 200, account);
+    // next();
+  });
 });

@@ -5,7 +5,7 @@ const {
 } = require("../controllers/admin.controller");
 const CheckRole = require("../middleware/CheckRole");
 const Limiter = require("../middleware/rateLimit");
-const VerifyToken = require("../middleware/VerifyToken");
+const VerifyToken = require("../middleware/VerifyAccessToken");
 
 router.get(
   "/fetch-all-users",

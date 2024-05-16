@@ -1,18 +1,17 @@
 const router = require("express").Router();
 const { UpdatePlan } = require("../controllers/user.controller");
-// const VerifyToken = require("../middleware/VerifyToken");
+const CheckRole = require("../middleware/CheckRole");
+const CheckUserPlan = require("../middleware/CheckUserPlan");
 const Limiter = require("../middleware/rateLimit");
+const VerifyAccessToken = require("../middleware/VerifyAccessToken");
 
-const VerifyToken = require("../middleware/VerifyToken");
-
-router.get(
+router.patch(
   "/update-plan",
   Limiter,
-   VerifyToken,
-  // CheckRole("admin"),
-UpdatePlan
-  
+  VerifyAccessToken,
+//   CheckRole("admin"),
+  //CheckUserPlan("basic"),
+  UpdatePlan
 );
-
 
 module.exports = router;

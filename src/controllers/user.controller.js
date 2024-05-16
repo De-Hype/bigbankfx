@@ -8,14 +8,20 @@ const { ValidateUpdatePlan } = require("../validations/userValidation");
 const GeneratePublicId = require("../helpers/GeneratePublicId");
 const AppResponse = require("../helpers/AppResponse");
 const User = require("../models/user.model");
-const GenerateToken = require("../helpers/GenerateToken");
+const {
+  GenerateAccessToken,
+  GenerateRefreshToken,
+} = require("../helpers/GenerateToken");
+
 require("dotenv").config();
+
+//Get New Access Token
 
 //Change User Plan
 module.exports.UpdatePlan = catchAsync(async (req, res, next) => {
   const { value, error } = ValidateUpdatePlan(req.body);
   if (error) return next(new AppError(error.message, 400));
-  const { publicId, plan } = req.user;
+  const { publicId, plan } = req.user.payload;
   //We have to check if this is the s
   const findUser = await User.findOne({ publicId: publicId });
   if (!findUser) return next(new AppError("User does not exist", 404));
@@ -40,8 +46,10 @@ module.exports.UpdatePlan = catchAsync(async (req, res, next) => {
     );
   const updatedUser = await User.findOneAndUpdate(
     { publicId: publicId },
-    { plan: value.plan }
+    { plan: value.plan },
+    {new:true}
   ).select("-password");
+  
   let account = {
     publicId: updatedUser.publicId,
     first_name: updatedUser.first_name,
@@ -50,12 +58,26 @@ module.exports.UpdatePlan = catchAsync(async (req, res, next) => {
     email: updatedUser.email,
     plan: updatedUser.plan,
   };
-  const token = GenerateToken(
+  const access_token = GenerateAccessToken(
+    account,
+    process.env.JWT_ACCESS_TOKEN_CREATE
+  );
+  const refresh_token = GenerateRefreshToken(
     account,
     process.env.LOGIN_JWT_TOKEN,
     value.rememberMe
   );
-  account = { ...account, token: token };
+
+  res.cookie("big_bank_fx_access_token", access_token, {
+    ...res.CookieOptions,
+    expires: new Date(Date.now() + 15 * 60 * 1000),
+    maxAge: new Date(Date.now() + 15 * 60 * 1000),
+  });
+  res.cookie("big_bank_fx_refresh_token", refresh_token, {
+    ...res.CookieOptions,
+    expires: new Date(Date.now() + 86400000),
+    maxAge: new Date(Date.now() + 86400000),
+  });
 
   return AppResponse(res, "Plan updated successfully", 200, account);
 });
