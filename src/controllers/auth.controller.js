@@ -124,7 +124,7 @@ module.exports.GetNewAccessToken = catchAsync(async (req, res, next) => {
       account,
       process.env.JWT_ACCESS_TOKEN_CREATE
     );
-    // console.log(access_token)
+    
     res.cookie("big_bank_fx_access_token", access_token, {
       ...res.CookieOptions,
       expires: new Date(Date.now() + 15 * 60 * 1000),

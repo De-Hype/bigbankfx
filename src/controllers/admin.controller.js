@@ -48,6 +48,7 @@ module.exports.AdminSignUp = catchAsync(async (req, res, next) => {
 });
 module.exports.AdminSignIn = catchAsync(async (req, res, next) => {
   const { value, error } = ValidateAdminSignIn(req.body);
+  
   if (error) return next(new AppError(error.message, 400));
 
   const findUser = await Admin.findOne({ email: value.email });

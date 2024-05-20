@@ -83,6 +83,10 @@ module.exports.UpdatePlan = catchAsync(async (req, res, next) => {
 
   return AppResponse(res, "Plan updated successfully", 200, account);
 });
+module.exports.UpdateUserDetails=catchAsync(async(req, res, next)=>{
+  const { value, error } = ValidateUpdatePlan(req.body);
+  if (error) return next(new AppError(error.message, 400));
+})
 
 module.exports.DeleteUser = catchAsync(async (req, res, next) => {
   const { value, error } = ValidateDeleteUser(req.body);

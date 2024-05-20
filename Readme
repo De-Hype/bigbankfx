@@ -1,7 +1,10 @@
 #BigbankFX
 
-BigbankFX was built by David Hype using Node.js/express.js and MongoDb for the database.
-
+User account creation mail
+Add Admin account mail
+Deposit succesful mail
+Profit succesful mail
+withdraw succesful mail
 ##Installation
 
 ##Usage

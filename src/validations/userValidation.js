@@ -13,5 +13,11 @@ const DeleteUser = Joi.object({
   email: Joi.string().email().required().label("Email")
 })
 
+const UpdateUserDetails = Joi.object({
+  email: Joi.string().email().label("Email"),
+  //plan: Joi.string().min(4).max(6).required().valid("basic", "silver", "gold"),
+  password: Joi.string().min(6).max(30).required().label("Password"),
+});
+
 exports.ValidateUpdatePlan = validator(UpdateUserPlan);
 exports.ValidateDeleteUser = validator(DeleteUser);

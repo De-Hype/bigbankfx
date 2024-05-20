@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+
 const GenerateAccessToken = (payload, secret) => {
   if (!secret) return;
   if (!payload) return;
