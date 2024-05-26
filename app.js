@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   })
@@ -39,7 +39,7 @@ app.use(morgan("dev"));
 //Set Cookie Options
 app.use((req, res, next)=>{
   res.cookieOptions={
-    domain:"http://localhost:5173",
+    domain:"localhost",
     httpOnly:true,
     secure:true,
     sameSite:"none",
