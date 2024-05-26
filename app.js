@@ -39,7 +39,7 @@ app.use(morgan("dev"));
 //Set Cookie Options
 app.use((req, res, next)=>{
   res.cookieOptions={
-    domain:"http://localhost:3000",
+    domain:"http://localhost:5173",
     httpOnly:true,
     secure:true,
     sameSite:"none",
