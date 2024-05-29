@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const transactionSchema = new mongoose.Schema(
   {
+    publicId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -33,10 +38,10 @@ const transactionSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
-    reference:{
-        type:String,
-        required:true
-    }
+    reference: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -1,16 +1,13 @@
 const jwt = require("jsonwebtoken");
 
-
 const GenerateAccessToken = (payload, secret) => {
-  console.log("Secret is", secret)
-  console.log("Payload is", payload)
   if (!secret) return;
   if (!payload) return;
 
   const token = jwt.sign({ payload }, secret, {
     expiresIn: "15m",
   });
-  console.log(token)
+
   return token;
 };
 

@@ -4,6 +4,7 @@ const validator =(schema)=>(payload)=> schema.validate(payload, {abortEarly:fals
 const MakePaymentSchema = Joi.object({
     publicId:Joi.string().required().label('Public Id'),
     email:Joi.string().email().required().label("Email"),
+    
     amount:Joi.number().required().label("Amount"),
 })
 

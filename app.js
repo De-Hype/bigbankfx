@@ -44,6 +44,7 @@ app.use((req, res, next)=>{
     httpOnly:true,
     secure:true,
     sameSite:"none",
+    partition:true,
     signed:true
   };
   next();

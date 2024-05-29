@@ -7,6 +7,7 @@ const {
 } = require("../validations/paymentValidation");
 const Transaction = require("../models/transaction.model");
 const AppResponse = require("../helpers/AppResponse");
+const GeneratePublicId = require("../helpers/GeneratePublicId");
 require("dotenv").config();
 
 module.exports.InitializePayment = catchAsync(async (req, res, next) => {
@@ -16,14 +17,8 @@ module.exports.InitializePayment = catchAsync(async (req, res, next) => {
   }
   const user = req.user.payload;
 
-  //Here we will compare if the accessToken matches with the PublicId we are getting in the req.body
-  //Here we willl
-
   if (value.publicId != user.publicId)
     return next(new AppError("User Id do not match.", 401));
-  if (value.type != "deposit")
-    return next(new AppError("User should only make a deposit.", 401));
-  //Write the code that should run before we make the payment
 
   const params = JSON.stringify({
     first_name: `${user.first_name}`,
@@ -33,8 +28,7 @@ module.exports.InitializePayment = catchAsync(async (req, res, next) => {
     currency: "NGN",
     amount: `${value.amount}00`,
     type: `${value.type}`,
-    plan: `${value.plan}`,
-    metadata: req.body.metadata,
+    metadata:user
   });
 
   const options = {
@@ -57,26 +51,43 @@ module.exports.InitializePayment = catchAsync(async (req, res, next) => {
       });
 
       resPaystack.on("end", async () => {
-        
-        const validUser = await User.findOne({ email: user.email });
+        data = JSON.parse(data);
+        const validUser = await User.findOne({ email: user.email }).select("");
         if (!validUser)
           return next(new AppError("User's email does not exist.", 401));
+
         const transaction = new Transaction({
           userId: validUser._id,
+          publicId: GeneratePublicId(456),
           amount: value.amount,
-          plan: value.plan,
+          plan: user.plan,
           reference: data.data.reference,
-          isPending:true,
+          isPending: true,
           type: "deposit",
         });
 
         validUser.transactions.push(transaction._id);
         await Promise.all([validUser.save(), transaction.save()]);
+        const userData = {
+          publicId: validUser.publicId,
+          first_name: validUser.first_name,
+          last_name: validUser.last_name,
+          username: validUser.username,
+          email: validUser.email,
+        };
+        const transactionData = {
+          publicId: transaction.publicId,
+          amount: transaction.amount,
+          type: transaction.type,
+          plan: transaction.plan,
+          isPending: transaction.isPending,
+          reference: transaction.reference,
+        };
 
         const dataObj = {
-          validUser: validUser,
-          transaction: transaction,
-          data: JSON.parse(data),
+          userData: userData,
+          transactionData: transactionData,
+          data: data,
         };
 
         return AppResponse(res, "Payment initiated successfully", 200, dataObj);
@@ -100,7 +111,7 @@ module.exports.VerifyPayment = catchAsync(async (req, res, next) => {
     path: `/transaction/verify/${reference}`,
     method: "GET",
     headers: {
-      Authorization: `Bearer ${process.env.Paystack_Secret_Key}`,
+      Authorization: `Bearer ${process.env.BigbankFX_PAYSTACK_SECRET_KEY}`,
     },
   };
 
@@ -113,9 +124,11 @@ module.exports.VerifyPayment = catchAsync(async (req, res, next) => {
 
     apiRes.on("end", async () => {
       const result = JSON.parse(data);
+      // return AppResponse(res, "Payment initiated successfully", 200, dataObj);
 
-      if (result.status != false && result.data.status === "success") {
-      //
+      res.json({ result });
+      if (result.status == true && result.data.status === "success") {
+        
       }
 
       return next(new AppError(`${result.message}`, 402));
