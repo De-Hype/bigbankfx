@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "*",
+    origin: "https://bigbankfx-react.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   })
@@ -40,7 +40,7 @@ app.use(morgan("dev"));
 //Set Cookie Options
 app.use((req, res, next)=>{
   res.cookieOptions={
-    domain:"http://localhost:3000",
+    domain:"https://bigbankfx-react.vercel.app",
     httpOnly:true,
     secure:true,
     sameSite:"none",
