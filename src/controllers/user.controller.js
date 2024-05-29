@@ -98,3 +98,7 @@ module.exports.DeleteUser = catchAsync(async (req, res, next) => {
 
   return AppResponse(res, "Account deleted succesfully", 200);
 });
+
+module.exports.FetchUserAllTransactions=catchAsync(async (req, res, next)=>{
+  
+})

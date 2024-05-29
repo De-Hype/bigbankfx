@@ -20,12 +20,8 @@ const UpdateUserSchema=Joi.object({
     email:Joi.string().email().required().label("Email"),
     password:Joi.string().min(6).max(30).required().label("Password"),
 });
-const MakePaymentSchema = Joi.object({
-    email:Joi.string().email().required().label("Email"),
-    amount:Joi.number().required().label("Amount")
-})
+
 
 
 exports.ValidateSignUp= validator(SignUpSchema);
 exports.ValidateSignIn = validator(SignInSchema);
-exports.ValidateInitializePayment=validator(MakePaymentSchema);

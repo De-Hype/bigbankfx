@@ -1,19 +1,20 @@
 const router = require("express").Router();
 
-const { InitializePayment } = require("../controllers/payment.controller");
+const { InitializePayment, VerifyPayment } = require("../controllers/payment.controller");
 const CheckRole = require("../middleware/CheckRole");
-const VerifyToken = require("../middleware/VerifyToken");
+const VerifyAccessToken = require("../middleware/VerifyAccessToken");
+// const VerifyToken = require("../middleware/VerifyToken");
 
 router.post(
   "/initialize-payment",
-  VerifyToken,
-  CheckRole("user"),
+  VerifyAccessToken,
+
   InitializePayment
 );
 router.get(
   "/verify-payment/:reference",
-  VerifyToken,
-  CheckRole("user"),
+  VerifyAccessToken,
+  // CheckRole("user"),
   VerifyPayment
 );
 

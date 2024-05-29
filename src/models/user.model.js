@@ -39,6 +39,9 @@ const userSchema = new mongoose.Schema(
     total_balance: {
       type: Number,
     },
+    transactions: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "transaction" },
+    ],
     prev_deposit: {
       type: Number,
     },
